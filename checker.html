@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will It Rain On My Parade? - Risk Assessment Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // checker.html theme colors
+                        'nasa-blue': '#1e3a8a', 
+                        'nasa-gold': '#f59e0b',
+                        'success': '#10b981',
+                        'warning': '#f59e0b',
+                        'danger': '#ef4444',
+                        // Added colors from index.html for the Navbar/Footer consistency
+                        'blue-600': '#2563EB',
+                        'blue-700': '#1D4ED8',
+                        'blue-800': '#1E40AF',
+                        'blue-100': '#DBEAFE',
+                        'green-500': '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Custom styles for aesthetic enhancements and layout */
+        .scroll-container::-webkit-scrollbar { height: 8px; }
+        .scroll-container::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .scroll-container::-webkit-scrollbar-track { background: #f3f4f6; }
+        .loading-spinner {
+            border-top-color: #f59e0b; 
+            border-left-color: #f59e0b;
+        }
+        .autocomplete-list {
+            position: absolute;
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-top: none;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .autocomplete-item:hover {
+            background-color: #f3f4f6;
+        }
+        header
+        {
+            margin-top: 5%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+
+   <nav id="nav-element" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center space-x-3">
+                        <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-nasa-blue shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976A3.996 3.996 0 0012 3m-7.234 10.976a4 4 0 011.01-1.376M14 10l-2-2m0 0l-2 2m2-2v8" />
+                            </svg>
+                        </span>
+                        <span class="text-2xl font-extrabold text-nasa-blue tracking-tight">RainCheck</span>
+                    </div>
+                    <div class="hidden md:flex space-x-6 items-center">
+                        <a href="index.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Home</a>
+                        <a href="features.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Features</a>
+                        <a href="events.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Events</a>
+                        <a href="checker.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Check Weather</a>
+                        <a href="about.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">About</a>
+                        <a href="checker.html" class="bg-nasa-gold text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-nasa-gold/90 transition shadow-md ml-4">
+                            Analyze Risk →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <div class="max-w-6xl mx-auto pt-24 p-4 sm:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-nasa-blue tracking-tight rounded-lg p-2">
+                Will It Rain On My Parade?
+            </h1>
+            <p class="text-xl text-gray-600 mt-2">Customized Event Weather Risk Assessment</p>
+        </header>
+
+        <div class="text-right mb-4">
+             <a href="events.html" class="inline-block px-4 py-2 bg-nasa-gold text-white font-semibold rounded-lg hover:bg-nasa-gold/90 transition duration-150 shadow-md">
+                My Saved Events →
+            </a>
+        </div>
+        
+        <div class="bg-white p-6 shadow-2xl rounded-xl mb-8 border-t-4 border-nasa-gold">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Plan Your Event</h2>
+            <div class="grid md:grid-cols-4 gap-4">
+                
+                <div class="relative md:col-span-2">
+                    <input type="text" id="locationInput" placeholder="Enter Location (e.g., Thiruvananthapuram, Kerala, 695001, India)"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nasa-blue focus:border-nasa-blue text-lg"
+                           oninput="handleAutocomplete(this.value)" value="Thiruvananthapuram, Kerala, 695001, India">
+                    <div id="autocompleteList" class="autocomplete-list rounded-b-lg"></div>
+                </div>
+                
+                <div>
+                    <input type="date" id="dateInput" 
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nasa-blue focus:border-nasa-blue text-lg"
+                           onchange="handleSearch()">
+                </div>
+                
+                <div>
+                    <input type="text" id="eventDetails" placeholder="Parade Name (Optional)"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nasa-blue focus:border-nasa-blue text-lg"
+                           value="My Awesome Parade">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-center space-x-4">
+                <button id="searchButton" onclick="handleSearch()"
+                        class="px-8 py-3 bg-nasa-blue text-white font-bold rounded-lg hover:bg-nasa-blue/90 transition duration-150 shadow-lg active:scale-[.98]">
+                    Analyze Weather Risk
+                </button>
+                <button id="saveButton" onclick="saveCurrentEvent()" disabled
+                        class="px-8 py-3 bg-success text-white font-bold rounded-lg hover:bg-success/90 transition duration-150 shadow-lg active:scale-[.98] disabled:bg-gray-400">
+                    Save Event
+                </button>
+            </div>
+            
+            <div id="statusMessage" class="mt-4 text-sm text-center text-gray-600"></div>
+        </div>
+
+        <div id="loadingIndicator" class="hidden text-center my-8">
+            <div class="loading-spinner inline-block w-10 h-10 border-4 rounded-full border-gray-200 border-solid animate-spin"></div>
+            <p class="text-nasa-gold font-medium mt-2">Fetching 7-day forecast from Open-Meteo...</p>
+        </div>
+
+        <div id="forecastContainer" class="hidden">
+            
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4" id="detailCardWrapper">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-1" id="currentEventName">My Awesome Parade</h3>
+                                <p class="text-lg text-nasa-blue" id="currentLocationDisplay">Thiruvananthapuram, Kerala, 695001, India | <span id="currentDateDisplay"></span></p>
+                                <div class="text-6xl font-extrabold flex items-baseline mt-2">
+                                    <span id="currentTemp">0</span><span class="text-4xl">&deg;C</span>
+                                </div>
+                                <p class="text-xl capitalize text-gray-500" id="currentCondition">Clear Skies</p>
+                            </div>
+                            <div class="text-8xl" id="currentIcon">☀️</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-4 text-center mt-6 border-t pt-4">
+                            <div>
+                                <p class="text-3xl font-bold text-nasa-blue" id="currentPrecipTotal">0.0</p>
+                                <p class="text-xs text-gray-500">Precip. (mm)</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-nasa-blue" id="currentWindSpeed">0.0</p>
+                                <p class="text-xs text-gray-500">Wind (km/h)</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-nasa-blue" id="currentHumidity">0</p>
+                                <p class="text-xs text-gray-500">Humidity (%)</p>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-nasa-blue" id="currentPop">0</p>
+                                <p class="text-xs text-gray-500">PoP (%)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1 p-6 rounded-xl shadow-2xl flex flex-col justify-center text-center transition duration-300 transform hover:scale-[1.02] cursor-pointer" id="riskCard">
+                    <h3 class="text-xl font-bold mb-2">Overall Event Risk</h3>
+                    <div id="riskLevel" class="text-6xl font-extrabold tracking-wider">GOOD</div>
+                    <p class="text-sm mt-4 font-light italic" id="riskDetail">Low chance of adverse conditions. Weather is perfect for your parade!</p>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 mt-6">7-Day Outlook</h2>
+            <div id="dailyForecasts" class="flex overflow-x-auto gap-4 pb-4 scroll-container">
+                </div>
+
+           
+        </div>
+
+    </div>
+    
+    <footer class="bg-gray-900 text-white py-12 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8">
+                    
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <svg class="h-8 w-8 text-nasa-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976A3.996 3.996 0 0012 3m-7.234 10.976a4 4 0 011.01-1.376M14 10l-2-2m0 0l-2 2m2-2v8" /></svg>
+                            <span class="text-xl font-bold">RainCheck</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">
+                            A weather risk assessment tool developed by  Team AlphaZ9.3  for the NASA Space Apps Challenge 2025.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Overview</h4>
+                        <ul class="space-y-2 text-gray-400 text-sm">
+                            <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                            <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+                            <li><a href="events.html" class="hover:text-white transition">Events Page</a></li>
+                            <li><a href="checker.html" class="hover:text-white transition">Check Weather</a></li>
+                            <li><a href="about.html" class="hover:text-white transition">About RainCheck</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Team AlphaZ9.3</h4>
+                        <ul class="space-y-2 text-gray-400 text-sm">
+                            <li>Team Lead: Rafkhan  </li>
+                            <li><a href="#" class="hover:text-white transition">Careers (Future)</a></li>
+                            <li><a href="#" class="hover:text-white transition">Privacy & Policy</a></li>
+                            <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Contact Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="mailto:rafkhanb0@gmail.com" class="text-gray-400 hover:text-nasa-gold transition" aria-label="Email Address">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+                            </a>
+                            <a href="https://instagram.com/er_ratum" class="text-gray-400 hover:text-nasa-gold transition" aria-label="Instagram Profile">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c2.716 0 3.056.012 4.122.067 1.053.053 1.79.22 2.427.464.673.255 1.234.613 1.77 1.148.536.536.903 1.097 1.158 1.77.243.637.41 1.374.464 2.427.056 1.066.067 1.406.067 4.122s-.012 3.056-.067 4.122c-.053 1.053-.22 1.79-.464 2.427-.255.673-.613 1.234-1.148 1.77-.536.536-1.097.903-1.77 1.158-.637.243-1.374.41-2.427.464-1.066.056-1.406.067-4.122.067s-3.056-.012-4.122-.067c-1.053-.053-1.79-.22-2.427-.464-.673-.255-1.234-.613-1.77-1.148-.536-.536-.903-1.097-1.158-1.77-.243-.637-.41-1.374-.464-2.427-.056-1.066-.067-1.406-.067-4.122s.012-3.056.067-4.122c.053-1.053.22-1.79.464-2.427.255-.673.613-1.234 1.148-1.77.536-.536 1.097-.903 1.77-1.158.637-.243 1.374-.41 2.427-.464C8.944 2.012 9.284 2 12 2zm0 4.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM12 8a4 4 0 110 8 4 4 0 010-8zm4.5-2.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+                            </a>
+                            <a href="https://wa.me/918129925845" class="text-gray-400 hover:text-nasa-gold transition" aria-label="WhatsApp Number">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.039 2c-5.467 0-9.916 4.453-9.916 9.916 0 1.637.418 3.233 1.206 4.676l-1.258 4.593 4.706-1.232c1.376.757 2.924 1.155 4.962 1.155h.005c5.467 0 9.916-4.453 9.916-9.916.001-5.463-4.452-9.916-9.916-9.916zm-.005 18.064c-1.84 0-3.551-.548-5.004-1.579l-3.23 1.047 1.05-3.136c-1.107-1.46-1.688-3.14-1.688-4.945 0-4.505 3.666-8.172 8.172-8.172 2.186 0 4.254.852 5.808 2.406 1.554 1.554 2.406 3.622 2.406 5.808-.001 4.505-3.667 8.172-8.173 8.172zm4.075-5.914c-.22-.361-.88-.707-.932-.733-.053-.027-.376-.04-.543-.04-.166 0-.313.053-.479.213-.166.16-.645.64-.789.774-.144.133-.29.15-.54.08-.25-.067-1.054-.388-2.007-1.233-.743-.653-1.246-1.47-1.39-1.723-.144-.253-.016-.39.127-.523.13-.13.29-.313.433-.477.143-.163.19-.276.29-.476.098-.199.049-.376-.024-.523-.073-.146-.66-.462-.907-.63-.247-.168-.426-.143-.585-.146-.156-.003-.334-.002-.51-.002-.176 0-.46.04-.707.319-.247.279-.94.92-.94 2.246 0 1.326.96 2.593 1.096 2.76.136.167 1.884 2.868 4.57 3.996 2.686 1.127 2.77 1.272 3.284 1.34 2.596.398 3.535.08 4.093-.264.558-.344.88-.937.88-1.564 0-.627-.233-.937-.47-.133z"/></svg>
+                            </a>
+                             <a href="#" class="text-gray-400 hover:text-nasa-gold transition" aria-label="GitHub Repository">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.864 8.165 6.837 9.49.5.092.682-.218.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.341-3.369-1.341-.454-1.157-1.107-1.464-1.107-1.464-.908-.62.069-.608.069-.608 1.007.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.831.091-.645.357-1.088.653-1.339-2.227-.253-4.555-1.114-4.555-4.943 0-1.091.39-1.988 1.03-2.685-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025.798-.221 1.649-.331 2.499-.335.85.004 1.701.114 2.499.335 1.91-1.295 2.75-1.025 2.75-1.025.546 1.378.202 2.397.098 2.65.64.697 1.03 1.594 1.03 2.685 0 3.839-2.332 4.687-4.565 4.935.369.319.692.946.692 1.916 0 1.383-.012 2.497-.012 2.836 0 .267.18.577.688.484C20.146 20.16 23 16.416 23 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                    <p class="text-sm">&copy; 2025 RainCheck. All Rights Reserved.</p>
+                    <p class="mt-2 text-xs">Developed by Team  AlphaZ9.3  | Project Lead:  Rafkhan    | Built for NASA Space Apps Challenge.</p>
+                </div>
+            </div>
+        </footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20n6aW816T2Ts0cO6s82v9fP+P3b+U6z70c5kC50E1A="
+            crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <script>
+        // --- DOM Elements ---
+        const locationInput = document.getElementById('locationInput');
+        const autocompleteList = document.getElementById('autocompleteList');
+        const dateInput = document.getElementById('dateInput');
+        const eventDetailsInput = document.getElementById('eventDetails');
+        const searchButton = document.getElementById('searchButton');
+        const saveButton = document.getElementById('saveButton'); 
+        const statusMessage = document.getElementById('statusMessage');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const forecastContainer = document.getElementById('forecastContainer');
+        const dailyForecasts = document.getElementById('dailyForecasts');
+        const riskCard = document.getElementById('riskCard');
+        const riskLevelEl = document.getElementById('riskLevel');
+        const riskDetailEl = document.getElementById('riskDetail');
+        const detailCardWrapper = document.getElementById('detailCardWrapper');
+        const currentLocationDisplay = document.getElementById('currentLocationDisplay');
+        const currentEventNameEl = document.getElementById('currentEventName');
+
+        // Detail elements
+        const currentTempEl = document.getElementById('currentTemp');
+        const currentConditionEl = document.getElementById('currentCondition');
+        const currentIconEl = document.getElementById('currentIcon');
+        const currentPrecipTotalEl = document.getElementById('currentPrecipTotal');
+        const currentWindSpeedEl = document.getElementById('currentWindSpeed');
+        const currentHumidityEl = document.getElementById('currentHumidity');
+        const currentPopEl = document.getElementById('currentPop');
+        const currentDateDisplayEl = document.getElementById('currentDateDisplay');
+
+        // --- Global State & Utilities ---
+        let map;
+        let marker;
+        let chartInstance;
+        const DEFAULT_LAT = 8.4973; // Thiruvananthapuram, Kerala, 695001, India
+        const DEFAULT_LON = 76.9485;
+        let selectedLocation = { lat: DEFAULT_LAT, lon: DEFAULT_LON, display_name: "Thiruvananthapuram, Kerala, 695001, India" };
+        let currentEventForecast = null; 
+        let currentEventRisk = null; 
+
+        // --- WMO Weather Code Mapping (for accurate conditions and base risk) ---
+        const WMO_MAP = {
+            0: { icon: '☀️', condition: 'Clear Sky', baseRisk: 0 },
+            1: { icon: '🌤️', condition: 'Mostly Sunny', baseRisk: 0 },
+            2: { icon: '⛅', condition: 'Partly Cloudy', baseRisk: 0.5 },
+            3: { icon: '☁️', condition: 'Overcast', baseRisk: 1 },
+            45: { icon: '🌫️', condition: 'Fog', baseRisk: 1 },
+            48: { icon: '🌫️', condition: 'Depositing Rime Fog', baseRisk: 1.5 },
+            51: { icon: '🌧️', condition: 'Light Drizzle', baseRisk: 2 },
+            53: { icon: '🌧️', condition: 'Moderate Drizzle', baseRisk: 2.5 },
+            55: { icon: '🌧️', condition: 'Dense Drizzle', baseRisk: 3 },
+            56: { icon: '🌧️❄️', condition: 'Light Freezing Drizzle', baseRisk: 3.5 },
+            57: { icon: '🌧️❄️', condition: 'Dense Freezing Drizzle', baseRisk: 4 },
+            61: { icon: '☔', condition: 'Slight Rain', baseRisk: 3 },
+            63: { icon: '☔', condition: 'Moderate Rain', baseRisk: 4 },
+            65: { icon: '⛈️', condition: 'Heavy Rain', baseRisk: 5 },
+            66: { icon: '🌧️❄️', condition: 'Light Freezing Rain', baseRisk: 5 },
+            67: { icon: '🌧️❄️', condition: 'Heavy Freezing Rain', baseRisk: 6 },
+            71: { icon: '❄️', condition: 'Slight Snowfall', baseRisk: 3.5 },
+            73: { icon: '❄️', condition: 'Moderate Snowfall', baseRisk: 4.5 },
+            75: { icon: '🌨️', condition: 'Heavy Snowfall', baseRisk: 5.5 },
+            77: { icon: '🌨️', condition: 'Snow Grains', baseRisk: 3 },
+            80: { icon: '🌧️', condition: 'Slight Rain Showers', baseRisk: 3.5 },
+            81: { icon: '☔', condition: 'Moderate Rain Showers', baseRisk: 4.5 },
+            82: { icon: '⛈️', condition: 'Violent Rain Showers', baseRisk: 6 },
+            85: { icon: '🌨️', condition: 'Slight Snow Showers', baseRisk: 4 },
+            86: { icon: '🌨️', condition: 'Heavy Snow Showers', baseRisk: 5.5 },
+            95: { icon: '⚡', condition: 'Thunderstorm', baseRisk: 5 },
+            96: { icon: '⛈️', condition: 'Thunderstorm with Slight Hail', baseRisk: 6 },
+            99: { icon: '⛈️', condition: 'Thunderstorm with Heavy Hail', baseRisk: 7 },
+        };
+
+        /**
+         * Uses the WMO code to define the official condition and sets an icon.
+         */
+        function getWeatherIconAndCondition(wmoCode, pop) {
+            let result = WMO_MAP[wmoCode] || { icon: '❓', condition: 'Unknown Condition', baseRisk: 1 };
+            
+            // Adjust condition text slightly if it's not a severe condition but PoP is high.
+            if (result.baseRisk < 2 && pop >= 40) {
+                result.icon = '🌦️'; // Change to partly sunny with showers icon
+                result.condition = 'Partly Cloudy with Chance of Rain';
+            }
+            return result;
+        }
+
+        // --- Geocoding (Nominatim) and Autocomplete ---
+
+        let autocompleteTimeout;
+        
+        function handleAutocomplete(query) {
+            clearTimeout(autocompleteTimeout);
+            autocompleteList.innerHTML = '';
+            
+            if (query.length < 3) return;
+
+            // Debounce the API call
+            autocompleteTimeout = setTimeout(async () => {
+                try {
+                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+                    const response = await fetch(url, {
+                        headers: {
+                            'User-Agent': 'NASA-SpaceApps-ParadePlanner/1.0' 
+                        }
+                    });
+                    const data = await response.json();
+
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'autocomplete-item text-sm text-gray-700 truncate';
+                        div.textContent = item.display_name;
+                        div.onclick = () => selectLocation(item);
+                        autocompleteList.appendChild(div);
+                    });
+                } catch (error) {
+                    console.error("Autocomplete error:", error);
+                }
+            }, 300);
+        }
+
+        function selectLocation(item) {
+            locationInput.value = item.display_name;
+            selectedLocation = {
+                lat: parseFloat(item.lat),
+                lon: parseFloat(item.lon),
+                display_name: item.display_name
+            };
+            autocompleteList.innerHTML = '';
+            
+            // Trigger search immediately after selection
+            handleSearch();
+        }
+
+        /**
+         * Geocoding function that relies on the manually selected location.
+         */
+        async function geocodeLocation(location) {
+             if (location === selectedLocation.display_name) {
+                return { lat: selectedLocation.lat, lon: selectedLocation.lon };
+            }
+            // Fallback for manual change without autocomplete selection
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`;
+            const response = await fetch(url, {
+                headers: { 'User-Agent': 'NASA-SpaceApps-ParadePlanner/1.0' }
+            });
+            const data = await response.json();
+            if (data.length === 0) throw new Error(`Location not found for "${location}"`);
+            
+            selectedLocation = {
+                lat: parseFloat(data[0].lat),
+                lon: parseFloat(data[0].lon),
+                display_name: data[0].display_name
+            };
+            return { lat: selectedLocation.lat, lon: selectedLocation.lon };
+        }
+
+
+        // --- Weather API (Open-Meteo) ---
+
+        /**
+         * Fetches 7-day weather forecast from Open-Meteo API.
+         */
+        async function fetchWeatherData(lat, lon, startDate, endDate) {
+            // Define parameters for Open-Meteo
+            const params = new URLSearchParams({
+                latitude: lat.toFixed(4),
+                longitude: lon.toFixed(4),
+                // IMPORTANT: Added 'weather_code'
+                daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,relative_humidity_2m_max,weather_code',
+                temperature_unit: 'celsius',
+                wind_speed_unit: 'kmh',
+                timezone: 'auto',
+                start_date: startDate, // Dynamically set start_date based on user selection
+                end_date: endDate // Dynamically set end_date 7 days after user selection
+            });
+
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error("Failed to fetch data from Open-Meteo.");
+            }
+            const data = await response.json();
+
+            // Structure the data for easy consumption
+            const dailyData = [];
+            for (let i = 0; i < data.daily.time.length; i++) {
+                const maxTemp = data.daily.temperature_2m_max[i];
+                const pop = data.daily.precipitation_probability_max[i];
+                const wind = data.daily.wind_speed_10m_max[i];
+                const wmoCode = data.daily.weather_code[i];
+
+                const iconCondition = getWeatherIconAndCondition(wmoCode, pop);
+
+                dailyData.push({
+                    date: data.daily.time[i],
+                    dayName: new Date(data.daily.time[i]).toLocaleDateString('en-US', { weekday: 'short' }),
+                    wmoCode: wmoCode,
+                    maxTemp: maxTemp.toFixed(1),
+                    minTemp: data.daily.temperature_2m_min[i].toFixed(1),
+                    precipSum: data.daily.precipitation_sum[i].toFixed(1), // in mm
+                    pop: pop, // Probability of Precipitation (%)
+                    windSpeed: wind.toFixed(1), // km/h
+                    humidity: data.daily.relative_humidity_2m_max[i], // Max humidity for the day
+                    icon: iconCondition.icon,
+                    condition: iconCondition.condition
+                });
+            }
+            return { daily: dailyData };
+        }
+
+
+        
+        function calculateRisk(dayData) {
+            const wind = parseFloat(dayData.windSpeed);
+            const temp = parseFloat(dayData.maxTemp);
+            const wmoCode = dayData.wmoCode;
+
+            // 1. Base Risk from WMO Code (e.g., Heavy Rain = 5 points)
+            const weatherInfo = WMO_MAP[wmoCode] || { baseRisk: 1 };
+            let riskScore = weatherInfo.baseRisk;
+
+            // 2. Wind Risk (Additional adjustment)
+            // Wind >= 50 km/h (about 31 mph) is very high, risk +2
+            if (wind >= 50) riskScore += 2;     
+            // Wind >= 30 km/h (about 18.6 mph) is strong, risk +0.5
+            else if (wind >= 30) riskScore += 0.5; 
+
+            // 3. Temperature Risk (Extreme discomfort adjustment)
+            if (temp >= 35) riskScore += 1;     // Very hot (+1)
+            else if (temp <= 0) riskScore += 1;  // Freezing (+1)
+
+            // Define Risk Levels based on the aggregated score
+            
+            if (riskScore >= 4.5) { // Severe weather (Heavy rain, snow, or thunderstorm)
+                return {
+                    level: "POOR",
+                    className: "bg-danger text-white border-danger",
+                    detail: "High chance of severe weather (heavy rain, thunderstorm, or heavy snow). Consider postponing or moving indoors!",
+                    color: 'danger'
+                };
+            } else if (riskScore >= 2.5) { // Moderate rain, high wind, or freezing temps
+                return {
+                    level: "MODERATE",
+                    className: "bg-warning text-gray-900 border-warning",
+                    detail: "Medium risk of adverse weather (moderate rain/snow, or high winds). Have a sturdy backup plan ready for your event.",
+                    color: 'warning'
+                };
+            } else {
+                return {
+                    level: "GOOD",
+                    className: "bg-success text-white border-success",
+                    detail: "Low risk of adverse weather. Excellent conditions for an outdoor event!",
+                    color: 'success'
+                };
+            }
+        }
+
+        // --- Rendering and Initialization ---
+
+       /* function initMap(lat, lon) {
+            if (map) {
+                map.remove(); // Remove existing map instance
+            }
+            // L is now guaranteed to be defined by the check in window.onload
+            map = L.map('map').setView([lat, lon], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            marker = L.marker([lat, lon]).addTo(map)
+                .bindPopup("Parade Location").openPopup();
+        }
+*/
+        function updateMap(lat, lon) {
+            if (typeof L === 'undefined') {
+                console.error("Leaflet object 'L' not available during map update.");
+                return;
+            }
+            if (map && marker) {
+                const newLatLng = new L.LatLng(lat, lon);
+                marker.setLatLng(newLatLng);
+                map.setView(newLatLng, 13);
+            } else {
+                initMap(lat, lon);
+            }
+        }
+
+        function renderForecast(data, locationName, eventName) {
+            const eventDay = dateInput.value;
+            // The selected date is now the start date of the API response, so data.daily[0] is the selected date's weather.
+            let currentDayData = data.daily[0]; 
+            
+            // Check if the selected date is in the past
+            const todayISO = new Date().toISOString().split('T')[0];
+            const isDateHistorical = eventDay < todayISO;
+
+            // Store current data globally
+            currentEventForecast = currentDayData;
+            currentEventRisk = calculateRisk(currentDayData);
+            
+            // 1. Update Current Day Summary and Risk
+            const risk = currentEventRisk; // Use stored risk
+            
+            // Risk Card Update
+            riskCard.className = `lg:col-span-1 p-6 rounded-xl shadow-2xl flex flex-col justify-center text-center transition duration-300 transform hover:scale-[1.02] cursor-pointer ${risk.className}`;
+            riskLevelEl.textContent = risk.level;
+            riskDetailEl.textContent = risk.detail;
+            riskDetailEl.className = `text-sm mt-4 font-light italic ${risk.level === 'GOOD' ? 'text-white/90' : risk.level === 'MODERATE' ? 'text-gray-700' : 'text-white/90'}`;
+
+            // Detail Card Update
+            detailCardWrapper.className = `bg-white p-6 rounded-xl shadow-lg border-l-4 ${risk.className.split(' ').pop()}`; // Apply color border
+            currentEventNameEl.textContent = eventName;
+            currentLocationDisplay.textContent = `${locationName} | `;
+            currentDateDisplayEl.textContent = eventDay; // Always show the selected date
+
+            currentTempEl.textContent = currentDayData.maxTemp;
+            currentConditionEl.textContent = currentDayData.condition;
+            currentIconEl.textContent = currentDayData.icon;
+            currentPrecipTotalEl.textContent = currentDayData.precipSum;
+            currentWindSpeedEl.textContent = currentDayData.windSpeed;
+            currentHumidityEl.textContent = currentDayData.humidity;
+            currentPopEl.textContent = currentDayData.pop;
+
+            // Update status message based on whether it's a forecast or history
+            if (isDateHistorical) {
+                statusMessage.innerHTML = `<span class="text-success font-semibold">Historical weather loaded for ${eventDay}. Analyze the risk for your past event.</span>`;
+            } else {
+                statusMessage.innerHTML = `<span class="text-success font-semibold">Forecast successfully loaded for ${eventDay}! Analyze the risk for your event.</span>`;
+            }
+
+            // 2. Render 7-Day Forecast Cards
+            dailyForecasts.innerHTML = '';
+            
+            data.daily.forEach((dayData) => {
+                const dayRisk = calculateRisk(dayData);
+                const isEventDay = dayData.date === eventDay;
+                
+                let borderColorClass = 'border-success';
+                if (dayRisk.level === 'MODERATE') borderColorClass = 'border-warning';
+                if (dayRisk.level === 'POOR') borderColorClass = 'border-danger';
+
+                const dayCard = document.createElement('div');
+                dayCard.className = `flex-shrink-0 w-[150px] bg-white p-4 rounded-lg shadow-md border-b-4 transition duration-200 ${borderColorClass} ${isEventDay ? 'ring-4 ring-nasa-gold/50 scale-105' : 'hover:shadow-lg'}`;
+                
+                dayCard.innerHTML = `
+                    <p class="text-sm font-light text-gray-500">${new Date(dayData.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}</p>
+                    <p class="text-xl font-bold text-gray-800">${isEventDay ? '🎯 EVENT' : dayData.dayName}</p>
+                    <div class="text-5xl my-2">${dayData.icon}</div>
+                    <p class="text-3xl font-extrabold text-nasa-blue">${dayData.maxTemp}<span class="text-xl font-normal">&deg;C</span></p>
+                    <p class="text-xs capitalize text-gray-500 truncate">${dayData.condition}</p>
+                    <div class="mt-2 text-sm">
+                        <span class="font-semibold">${dayData.pop}%</span> <span class="text-gray-500">PoP</span>
+                    </div>
+                    <p class="text-xs mt-1 font-semibold ${dayRisk.level === 'GOOD' ? 'text-success' : dayRisk.level === 'MODERATE' ? 'text-warning' : 'text-danger'}">
+                        Risk: ${dayRisk.level}
+                    </p>
+                `;
+                dailyForecasts.appendChild(dayCard);
+            });
+
+            forecastContainer.classList.remove('hidden');
+            saveButton.disabled = false; // Enable save button after successful load
+        }
+
+        // --- Save Event Logic ---
+        function saveCurrentEvent() {
+            if (!currentEventForecast || !currentEventRisk) {
+                alert('Please run a weather risk analysis first!');
+                return;
+            }
+
+            const eventName = eventDetailsInput.value.trim() || 'Untitled Event';
+            const eventDate = dateInput.value;
+            const locationName = selectedLocation.display_name;
+
+            // Combine event info, location, and the specific day's weather/risk
+            const eventToSave = {
+                id: Date.now(), // Unique ID
+                name: eventName,
+                date: eventDate,
+                location: locationName,
+                lat: selectedLocation.lat,
+                lon: selectedLocation.lon,
+                forecast: currentEventForecast, // The detailed weather data for the event day
+                risk: currentEventRisk, // The calculated risk object
+                savedAt: new Date().toISOString()
+            };
+
+            // 1. Retrieve existing events
+            let events = JSON.parse(localStorage.getItem('savedEvents')) || [];
+
+            // 2. Add new event and save back
+            events.push(eventToSave);
+            localStorage.setItem('savedEvents', JSON.stringify(events));
+
+            statusMessage.innerHTML = `<span class="text-success font-semibold">Event "${eventName}" saved! View all events on the <a href="events.html" class="underline">My Saved Events</a> page.</span>`;
+            saveButton.disabled = true; // Disable until a new search is run
+        }
+        // -----------------------------
+
+        
+        // --- Main Execution Handler ---
+
+        async function handleSearch() {
+            const location = locationInput.value.trim();
+            const eventName = eventDetailsInput.value.trim() || 'Your Event';
+            
+            if (!location) {
+                statusMessage.innerHTML = '<span class="text-danger">Please enter a location.</span>';
+                return;
+            }
+
+            // Clear previous state
+            currentEventForecast = null;
+            currentEventRisk = null;
+            saveButton.disabled = true;
+
+            // --- FIXED LOGIC: Dynamic Date Range ---
+            const selectedDate = dateInput.value;
+            const startDay = selectedDate;
+
+            // Calculate end day 6 days after the selected date to get a full 7-day view
+            const startDateObj = new Date(selectedDate);
+            // Use UTC date methods to avoid timezone shift issues when calculating range
+            const endDateObj = new Date(startDateObj);
+            endDateObj.setDate(startDateObj.getDate() + 6); 
+            const endDay = endDateObj.toISOString().split('T')[0];
+            // ---------------------------------------
+
+            // Reset UI and show loading
+            statusMessage.textContent = '';
+            
+            // Only show loader if location is changing (implies new API call)
+            if (loadingIndicator.classList.contains('hidden')) {
+                // If it's a new location search, we need to re-fetch
+                if (selectedLocation.display_name !== location) {
+                     loadingIndicator.classList.remove('hidden');
+                }
+            }
+            searchButton.disabled = true;
+
+            try {
+                let lat = selectedLocation.lat;
+                let lon = selectedLocation.lon;
+
+                // 1. Geocoding (only if the location text has changed)
+                if (selectedLocation.display_name !== location) {
+                    statusMessage.innerHTML = `<span class="text-nasa-blue">Confirming coordinates for ${location}...</span>`;
+                    const coords = await geocodeLocation(location);
+                    lat = coords.lat;
+                    lon = coords.lon;
+                }
+
+
+                // 2. Fetch Weather Data (Open-Meteo API)
+                statusMessage.innerHTML = `<span class="text-nasa-blue">Fetching 7-day weather data starting from ${startDay}...</span>`;
+                const weatherData = await fetchWeatherData(lat, lon, startDay, endDay);
+
+                // 3. Render Results
+                renderForecast(weatherData, selectedLocation.display_name, eventName);
+
+            } catch (error) {
+                console.error("Error during process:", error);
+                statusMessage.innerHTML = `<span class="text-danger font-semibold">Error: ${error.message || 'An unknown error occurred'}. Could not complete the weather lookup.</span>`;
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                searchButton.disabled = false;
+            }
+        }
+        
+        // --- Geolocation Handler ---
+        function getCurrentLocation() {
+            // Check if the browser supports Geolocation
+            if (navigator.geolocation) {
+                statusMessage.innerHTML = '<span class="text-nasa-blue">Attempting to get your current location...</span>';
+                loadingIndicator.classList.remove('hidden');
+
+                // Geolocation options: high accuracy, timeout, and max age
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        // Reverse geocode the coordinates to get a displayable location name
+                        reverseGeocode(lat, lon);
+                    },
+                    (error) => {
+                        // User denied or an error occurred
+                        console.error("Geolocation error:", error);
+                        
+                        // Fallback to the default location (Thiruvananthapuram)
+                        statusMessage.innerHTML = '<span class="text-warning">Could not get your location. Loading default location forecast.</span>';
+                        loadingIndicator.classList.add('hidden');
+                        
+                        // Proceed with the initial search using the default location (already in locationInput.value)
+                        handleSearch();
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                // Browser doesn't support Geolocation
+                console.error("Geolocation is not supported by this browser.");
+                statusMessage.innerHTML = '<span class="text-warning">Geolocation is not supported by your browser. Loading default location forecast.</span>';
+                handleSearch(); // Fallback
+            }
+        }
+
+        /**
+         * Uses Nominatim to convert latitude and longitude into a displayable address.
+         */
+        async function reverseGeocode(lat, lon) {
+            try {
+                statusMessage.innerHTML = '<span class="text-nasa-blue">Translating coordinates to address...</span>';
+                const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`;
+                const response = await fetch(url, {
+                    headers: { 'User-Agent': 'NASA-SpaceApps-ParadePlanner/1.0' }
+                });
+                const data = await response.json();
+                
+                if (data.display_name) {
+                    // Update global state and input fields
+                    selectedLocation = {
+                        lat: lat,
+                        lon: lon,
+                        display_name: data.display_name
+                    };
+                    locationInput.value = data.display_name;
+                    
+                    // Run the main search with the new location
+                    handleSearch();
+                } else {
+                    throw new Error("Reverse geocoding failed.");
+                }
+            } catch (error) {
+                console.error("Reverse geocoding error:", error);
+                statusMessage.innerHTML = '<span class="text-danger">Failed to get address from coordinates. Loading default location.</span>';
+                // Fallback to default location search
+                locationInput.value = "Thiruvananthapuram, Kerala, 695001, India"; // Ensure default value is set
+                handleSearch();
+            }
+        }
+        
+        // --- Navbar Scroll Logic (Copied from index.html) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('nav-element');
+
+            function handleScroll() {
+                if (window.scrollY > 50) {
+                    nav.classList.add('bg-white', 'shadow-lg');
+                    nav.classList.remove('bg-transparent');
+                } else {
+                    nav.classList.remove('bg-white', 'shadow-lg');
+                    nav.classList.add('bg-transparent');
+                }
+            }
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll();
+        });
+
+
+        // Initialize on load
+        window.onload = () => {
+             // Set default date to today
+             const todayISO = new Date().toISOString().split('T')[0];
+             dateInput.value = todayISO;
+             
+             // Set max date to 7 days from now (approximate safe forecast range)
+             const maxDate = new Date();
+             maxDate.setDate(maxDate.getDate() + 7);
+             dateInput.max = maxDate.toISOString().split('T')[0];
+             
+             // Run initial check: Attempt to get user's current location first
+             getCurrentLocation();
+        };
+    </script>
+</body>
+</html>

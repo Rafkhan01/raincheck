@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - RainCheck: Core Capabilities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Core colors from checker.html
+                        'nasa-blue': '#1e3a8a', 
+                        'nasa-gold': '#f59e0b',
+                        'success': '#10b981',
+                        'warning': '#f59e0b',
+                        'danger': '#ef4444',
+                        
+                        // Accent colors for Feature Cards
+                        'blue-100': '#DBEAFE', 
+                        'blue-600': '#2563EB', 
+                        'green-100': '#D1FAE5',
+                        'green-600': '#059669',
+                        'orange-100': '#FFEDD5',
+                        'orange-600': '#EA580C',
+                        'purple-100': '#F3E8FF',
+                        'purple-600': '#9333EA',
+                        'red-100': '#FEE2E2',
+                        'red-600': '#DC2626',
+                        'yellow-100': '#FEF9C3',
+                        'yellow-600': '#CA8A04',
+                        
+                        // Used in the Navbar scroll logic
+                        'blue-700': '#1D4ED8',
+                        'blue-800': '#1E40AF',
+                        'blue-light': '#e0f2fe', 
+                        'gold-light': '#fef3c7', 
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <div class="min-h-screen">
+
+        <nav id="nav-element" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center space-x-3">
+                        <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-nasa-blue shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976A3.996 3.996 0 0012 3m-7.234 10.976a4 4 0 011.01-1.376M14 10l-2-2m0 0l-2 2m2-2v8" />
+                            </svg>
+                        </span>
+                        <span class="text-2xl font-extrabold text-nasa-blue tracking-tight">RainCheck</span>
+                    </div>
+                    <div class="hidden md:flex space-x-6 items-center">
+                        <a href="index.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Home</a>
+                        <a href="features.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Features</a>
+                        <a href="events.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Events</a>
+                        <a href="checker.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Check Weather</a>
+                        <a href="about.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">About</a>
+                        <a href="checker.html" class="bg-nasa-gold text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-nasa-gold/90 transition shadow-md ml-4">
+                            Analyze Risk →
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const nav = document.getElementById('nav-element');
+
+                    function handleScroll() {
+                        if (window.scrollY > 50) {
+                            nav.classList.add('bg-white', 'shadow-lg');
+                            nav.classList.remove('bg-transparent');
+                        } else {
+                            nav.classList.remove('bg-white', 'shadow-lg');
+                            nav.classList.add('bg-transparent');
+                        }
+                    }
+                    window.addEventListener('scroll', handleScroll);
+                    handleScroll();
+                });
+            </script>
+        </nav>
+
+        <section class="pt-32 pb-20 px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16">
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-nasa-blue mb-4">
+                        RainCheck Core Capabilities
+                    </h1>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        We leverage  NASA-linked meteorological data  and advanced predictive models to ensure your event planning is precise and risk-free.
+                    </p>
+                </div>
+                
+                <div class="space-y-12">
+
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-blue-600 transition hover:shadow-2xl">
+                        <div class="flex-shrink-0 bg-blue-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Real-Time Data Access</h2>
+                            <p class="text-lg text-gray-700">
+                                Get  instant access to live weather conditions . RainCheck leverages data aggregated from leading meteorological sources, including models linked to  NASA's advanced satellite technology , providing a precise, moment-by-moment reading of temperature, humidity, and atmospheric pressure for your specific location.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-green-600 transition hover:shadow-2xl">
+                         <div class="flex-shrink-0 bg-green-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">High-Accuracy 7-Day Forecast</h2>
+                            <p class="text-lg text-gray-700">
+                                Our predictive engine provides the  most reliable 7-day forecast  by utilizing sophisticated algorithms to analyze current weather and high-resolution historical patterns. The forecast includes critical metrics like  precipitation amount, wind speed, and UV index , allowing for proactive risk mitigation well in advance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-orange-600 transition hover:shadow-2xl">
+                        <div class="flex-shrink-0 bg-orange-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002 12c0 2.23 1.353 4.225 3.332 5.309L12 22l6.668-4.691A12.01 12.01 0 0022 12c0-3.37-1.121-6.44-3.382-8.616z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Color-Coded Risk Assessment</h2>
+                            <p class="text-lg text-gray-700">
+                                We transform complex weather variables (heavy rain, strong winds, extreme heat) into a  simple, color-coded risk indicator  (Good, Moderate, High). This instant visual assessment cuts through data noise, providing clear and  informed decision-making  regarding rescheduling or preparation.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-purple-600 transition hover:shadow-2xl">
+                        <div class="flex-shrink-0 bg-purple-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Hyper-Local Pinpoint Accuracy</h2>
+                            <p class="text-lg text-gray-700">
+                                Using the reliable  geocoding service , RainCheck converts street addresses and place names into  precise latitude and longitude coordinates . This capability ensures you fetch  hyper-local weather data  that is specific to your event site, not just the nearest city center, guaranteeing relevance and accuracy.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-red-600 transition hover:shadow-2xl">
+                        <div class="flex-shrink-0 bg-red-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Centralized Event Management</h2>
+                            <p class="text-lg text-gray-700">
+                                Keep track of all your planned events in one place with the  Events Dashboard . This feature allows you to save multiple risk checks, provides quick access to their current status, and is built for future enhancements like  automatic weather alerts  and smarter alternative date suggestions.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row items-start bg-white p-6 md:p-8 rounded-2xl shadow-xl border-l-8 border-yellow-600 transition hover:shadow-2xl">
+                        <div class="flex-shrink-0 bg-yellow-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 md:mb-0 md:mr-8">
+                            <svg class="h-9 w-9 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2c0-.656-.126-1.283-.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M9 20v-2c0-.656.126-1.283.356-1.857m1.09-1.09C12.784 10.742 16.5 10 16.5 10s-3.716-.742-6.544-2.257V5a2 2 0 00-2-2.5 2 2 0 00-2 2.5v2.743c-2.828 1.515-6.544 2.257-6.544 2.257s3.716.742 6.544 2.257zM12 14.5a3 3 0 100-6 3 3 0 000 6z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Intuitive User Experience</h2>
+                            <p class="text-lg text-gray-700">
+                                The platform is built for  simplicity and intuitive design . Whether you're an event coordinator or planning a small picnic, the clean,  streamlined interface  ensures you can get the critical weather information and risk analysis you need quickly and efficiently without complicated navigation or data overload.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-gray-900 text-white py-12 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8">
+                    
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <svg class="h-8 w-8 text-nasa-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976A3.996 3.996 0 0012 3m-7.234 10.976a4 4 0 011.01-1.376M14 10l-2-2m0 0l-2 2m2-2v8" /></svg>
+                            <span class="text-xl font-bold">RainCheck</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">
+                            A weather risk assessment tool developed by Team AlphaZ9.3 for the NASA Space Apps Challenge 2025.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Overview</h4>
+                        <ul class="space-y-2 text-gray-400 text-sm">
+                            <li><a href="features.html" class="hover:text-white transition">Features</a></li>
+                            <li><a href="home.html" class="hover:text-white transition">How It Works</a></li>
+                            <li><a href="events.html" class="hover:text-white transition">Events Page</a></li>
+                            <li><a href="checker.html" class="hover:text-white transition">Check Weather</a></li>
+                            <li><a href="about.html" class="hover:text-white transition">About RainCheck</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Team AlphaZ9.3</h4>
+                        <ul class="space-y-2 text-gray-400 text-sm">
+                            <li>Team Lead: Rafkhan  </li>
+                            <li><a href="#" class="hover:text-white transition">Careers (Future)</a></li>
+                            <li><a href="#" class="hover:text-white transition">Privacy & Policy</a></li>
+                            <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-4 text-nasa-gold">Contact Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="mailto:rafkhanb0@gmail.com" class="text-gray-400 hover:text-nasa-gold transition" aria-label="Email Address">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+                            </a>
+                            <a href="https://instagram.com/er_ratum" class="text-gray-400 hover:text-nasa-gold transition" aria-label="Instagram Profile">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c2.716 0 3.056.012 4.122.067 1.053.053 1.79.22 2.427.464.673.255 1.234.613 1.77 1.148.536.536.903 1.097 1.158 1.77.243.637.41 1.374.464 2.427.056 1.066.067 1.406.067 4.122s-.012 3.056-.067 4.122c-.053 1.053-.22 1.79-.464 2.427-.255.673-.613 1.234-1.148 1.77-.536.536-1.097.903-1.77 1.158-.637.243-1.374.41-2.427.464-1.066.056-1.406.067-4.122.067s-3.056-.012-4.122-.067c-1.053-.053-1.79-.22-2.427-.464-.673-.255-1.234-.613-1.77-1.148-.536-.536-1.097-.903-1.77-1.158-.637-.243-1.374-.41-2.427-.464C8.944 2.012 9.284 2 12 2zm0 4.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM12 8a4 4 0 110 8 4 4 0 010-8zm4.5-2.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+                            </a>
+                            <a href="https://wa.me/918129925845" class="text-gray-400 hover:text-nasa-gold transition" aria-label="WhatsApp Number">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.039 2c-5.467 0-9.916 4.453-9.916 9.916 0 1.637.418 3.233 1.206 4.676l-1.258 4.593 4.706-1.232c1.376.757 2.924 1.155 4.962 1.155h.005c5.467 0 9.916-4.453 9.916-9.916.001-5.463-4.452-9.916-9.916-9.916zm-.005 18.064c-1.84 0-3.551-.548-5.004-1.579l-3.23 1.047 1.05-3.136c-1.107-1.46-1.688-3.14-1.688-4.945 0-4.505 3.666-8.172 8.172-8.172 2.186 0 4.254.852 5.808 2.406 1.554 1.554 2.406 3.622 2.406 5.808-.001 4.505-3.667 8.172-8.173 8.172zm4.075-5.914c-.22-.361-.88-.707-.932-.733-.053-.027-.376-.04-.543-.04-.166 0-.313.053-.479.213-.166.16-.645.64-.789.774-.144.133-.29.15-.54.08-.25-.067-1.054-.388-2.007-1.233-.743-.653-1.246-1.47-1.39-1.723-.144-.253-.016-.39.127-.523.13-.13.29-.313.433-.477.143-.163.19-.276.29-.476.098-.199.049-.376-.024-.523-.073-.146-.66-.462-.907-.63-.247-.168-.426-.143-.585-.146-.156-.003-.334-.002-.51-.002-.176 0-.46.04-.707.319-.247.279-.94.92-.94 2.246 0 1.326.96 2.593 1.096 2.76.136.167 1.884 2.868 4.57 3.996 2.686 1.127 2.77 1.272 3.284 1.34 2.596.398 3.535.08 4.093-.264.558-.344.88-.937.88-1.564 0-.627-.233-.937-.47-.133z"/></svg>
+                            </a>
+                             <a href="#" class="text-gray-400 hover:text-nasa-gold transition" aria-label="GitHub Repository">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.864 8.165 6.837 9.49.5.093.673-.217.673-.483 0-.237-.008-.867-.013-1.703-2.782.605-3.37-1.34-3.37-1.34-.454-1.154-1.107-1.462-1.107-1.462-.905-.62.068-.608.068-.608 1.002.071 1.53.94 1.53.94.89 1.526 2.336 1.084 2.906.829.091-.643.349-1.084.634-1.334-2.22-.252-4.555-1.11-4.555-4.943 0-1.09.39-1.984 1.03-2.68a3.597 3.597 0 01.1-2.65l-.234-.783c-.322-1.015.11-2.115 1.054-2.65C9.76 5.3 11 5.6 12 5.6c1.02 0 2.24-.3 3.197-.736 1.353.42 1.776 1.58 1.454 2.65l-.234.783c.64.696 1.03 1.59 1.03 2.68 0 3.832-2.335 4.69-4.564 4.942.361.31.68.92.68 1.85 0 1.336-.012 2.41-.012 2.73 0 .26.18.567.688.474C20.146 20.16 23 16.416 23 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                    <p class="text-sm">&copy; 2025 RainCheck. All Rights Reserved.</p>
+                    <p class="mt-2 text-xs">Developed by Team AlphaZ9.3 | Project Lead: Rafkhan   | Built for NASA Space Apps Challenge.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
