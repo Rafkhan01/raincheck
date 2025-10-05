@@ -69,33 +69,53 @@
             margin-top: 5%;
         }
     </style>
-</head>
 <body class="bg-gray-50 min-h-screen font-sans">
-
-   <nav id="nav-element" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <div class="flex items-center space-x-3">
+ <nav id="nav-element" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <div class="flex items-center space-x-3">
                         <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-nasa-blue shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.976A3.996 3.996 0 0012 3m-7.234 10.976a4 4 0 011.01-1.376M14 10l-2-2m0 0l-2 2m2-2v8" />
                             </svg>
                         </span>
                         <span class="text-2xl font-extrabold text-nasa-blue tracking-tight">RainCheck</span>
-                    </div>
-                    <div class="hidden md:flex space-x-6 items-center">
-                        <a href="index.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Home</a>
-                        <a href="features.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Features</a>
-                        <a href="events.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Events</a>
-                        <a href="checker.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Check Weather</a>
-                        <a href="about.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">About</a>
-                        <a href="checker.html" class="bg-nasa-gold text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-nasa-gold/90 transition shadow-md ml-4">
-                            Analyze Risk →
-                        </a>
-                    </div>
-                </div>
+             </div>
+
+           <div class="hidden md:flex space-x-6 items-center">
+                <a href="index.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Home</a>
+                <a href="features.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Features</a>
+                <a href="events.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Events</a>
+                <a href="checker.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">Check Weather</a>
+                <a href="about.html" class="text-gray-700 hover:text-nasa-gold transition font-medium">About</a>
+                <a href="checker.html" class="bg-nasa-gold text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-nasa-gold/90 transition shadow-md ml-4">
+                    Analyze Risk →
+                </a>
             </div>
-        </nav>
+
+            <div class="md:hidden">
+                <button id="menu-button" type="button" class="text-gray-700 hover:text-nasa-blue focus:outline-none focus:text-nasa-blue" aria-controls="mobile-menu" aria-expanded="false">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Home</a>
+            <a href="features.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Features</a>
+            <a href="events.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Events</a>
+            <a href="checker.html" class="block px-3 py-2 rounded-md text-base font-medium text-nasa-blue font-bold hover:bg-gray-100">Check Weather</a>
+            <a href="about.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">About</a>
+            <a href="checker.html" class="block w-full text-center bg-nasa-gold text-white py-2 rounded-lg font-semibold mt-2 hover:bg-nasa-gold/90">
+                Analyze Risk →
+            </a>
+        </div>
+    </div>
+</nav>
     <div class="max-w-6xl mx-auto pt-24 p-4 sm:p-8">
         <header class="text-center mb-8">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-nasa-blue tracking-tight rounded-lg p-2">
@@ -224,8 +244,8 @@
                     <div>
                         <h4 class="font-bold mb-4 text-nasa-gold">Overview</h4>
                         <ul class="space-y-2 text-gray-400 text-sm">
-                            <li><a href="#features" class="hover:text-white transition">Features</a></li>
-                            <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+                            <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                            <li><a href="features.html" class="hover:text-white transition">Features</a></li>
                             <li><a href="events.html" class="hover:text-white transition">Events Page</a></li>
                             <li><a href="checker.html" class="hover:text-white transition">Check Weather</a></li>
                             <li><a href="about.html" class="hover:text-white transition">About RainCheck</a></li>
@@ -254,7 +274,7 @@
                             <a href="https://wa.me/918129925845" class="text-gray-400 hover:text-nasa-gold transition" aria-label="WhatsApp Number">
                                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.039 2c-5.467 0-9.916 4.453-9.916 9.916 0 1.637.418 3.233 1.206 4.676l-1.258 4.593 4.706-1.232c1.376.757 2.924 1.155 4.962 1.155h.005c5.467 0 9.916-4.453 9.916-9.916.001-5.463-4.452-9.916-9.916-9.916zm-.005 18.064c-1.84 0-3.551-.548-5.004-1.579l-3.23 1.047 1.05-3.136c-1.107-1.46-1.688-3.14-1.688-4.945 0-4.505 3.666-8.172 8.172-8.172 2.186 0 4.254.852 5.808 2.406 1.554 1.554 2.406 3.622 2.406 5.808-.001 4.505-3.667 8.172-8.173 8.172zm4.075-5.914c-.22-.361-.88-.707-.932-.733-.053-.027-.376-.04-.543-.04-.166 0-.313.053-.479.213-.166.16-.645.64-.789.774-.144.133-.29.15-.54.08-.25-.067-1.054-.388-2.007-1.233-.743-.653-1.246-1.47-1.39-1.723-.144-.253-.016-.39.127-.523.13-.13.29-.313.433-.477.143-.163.19-.276.29-.476.098-.199.049-.376-.024-.523-.073-.146-.66-.462-.907-.63-.247-.168-.426-.143-.585-.146-.156-.003-.334-.002-.51-.002-.176 0-.46.04-.707.319-.247.279-.94.92-.94 2.246 0 1.326.96 2.593 1.096 2.76.136.167 1.884 2.868 4.57 3.996 2.686 1.127 2.77 1.272 3.284 1.34 2.596.398 3.535.08 4.093-.264.558-.344.88-.937.88-1.564 0-.627-.233-.937-.47-.133z"/></svg>
                             </a>
-                             <a href="#" class="text-gray-400 hover:text-nasa-gold transition" aria-label="GitHub Repository">
+                             <a href="https://github.com/Rafkhan01" class="text-gray-400 hover:text-nasa-gold transition" aria-label="GitHub Repository">
                                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.864 8.165 6.837 9.49.5.092.682-.218.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.341-3.369-1.341-.454-1.157-1.107-1.464-1.107-1.464-.908-.62.069-.608.069-.608 1.007.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.831.091-.645.357-1.088.653-1.339-2.227-.253-4.555-1.114-4.555-4.943 0-1.091.39-1.988 1.03-2.685-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025.798-.221 1.649-.331 2.499-.335.85.004 1.701.114 2.499.335 1.91-1.295 2.75-1.025 2.75-1.025.546 1.378.202 2.397.098 2.65.64.697 1.03 1.594 1.03 2.685 0 3.839-2.332 4.687-4.565 4.935.369.319.692.946.692 1.916 0 1.383-.012 2.497-.012 2.836 0 .267.18.577.688.484C20.146 20.16 23 16.416 23 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/></svg>
                             </a>
                         </div>
@@ -827,7 +847,11 @@
                     nav.classList.add('bg-transparent');
                 }
             }
-
+            const menuButton = document.getElementById('menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
             window.addEventListener('scroll', handleScroll);
             handleScroll();
         });
